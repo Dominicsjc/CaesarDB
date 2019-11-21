@@ -7,16 +7,21 @@
 
 #include <string>
 #include <cstring>
+#include <vector>
+#include <chrono>
+#include <ctime>
 #include "dbInstance.h"
+
+typedef std::pair<std::string, std::string> course;
 
 class userSession {
 private:
-    int id = -1;
-    bool login = false;
-    std::string name;
-    std::string password;
     dbInstance *db;
 
+    int id = -1;
+    std::string name;
+    std::string password;
+    bool login = false;
 
 public:
     userSession() = delete;
@@ -27,11 +32,13 @@ public:
         password = passwd;
     };
 
-    ~userSession() = default;
+    ~userSession() { db = nullptr; };
 
     void tryLogin();
 
     bool getLoginStatus();
+
+    std::vector<course> getCurCourses();
 };
 
 
