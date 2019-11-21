@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 #include <ctime>
+#include <unordered_map>
 #include "dbInstance.h"
 
 typedef std::pair<std::string, std::string> course;
@@ -39,6 +40,8 @@ public:
     bool getLoginStatus();
 
     std::vector<course> getCurCourses();
+
+    std::unordered_map<std::string, std::string> getTranscript();
 };
 
 

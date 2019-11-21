@@ -61,3 +61,30 @@ std::vector<course> userSession::getCurCourses() {
     mysql_free_result(courses_res);
     return res;
 }
+
+std::unordered_map<std::string, std::string> userSession::getTranscript(){
+    std::unordered_map<std::string, std::string> res;
+
+    MYSQL_RES *transcript_res = db->query("SELECT UoSCode, Grade FROM transcript WHERE StudId = " + std::to_string(id) + ";");
+    if (transcript_res == NULL) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        return {};
+    }
+
+    MYSQL_ROW row;
+    int numsrow = (int) mysql_num_rows(transcript_res);
+    for(int i=0; i < numsrow; i++){
+        row = mysql_fetch_row(transcript_res);
+        if(row != NULL){
+            std::string code = row[0];
+            std::string grade;
+            if(row[1])
+                grade = row[1];
+            else
+                grade = "NULL";
+            res.emplace(std::make_pair(code, grade));
+        }
+    }
+    mysql_free_result(transcript_res);
+    return res;
+}
