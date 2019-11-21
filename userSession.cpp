@@ -29,7 +29,7 @@ bool userSession::getLoginStatus() {
     return login;
 }
 
-bool userSession::getCurCourses(std::vector<std::shared_ptr<course>> &container) {
+bool userSession::getCurCourses(std::vector<std::shared_ptr<course_pair>> &container) {
     auto timeNow = std::chrono::system_clock::now();
     std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
     struct tm *time = localtime(&curTime);
@@ -54,15 +54,14 @@ bool userSession::getCurCourses(std::vector<std::shared_ptr<course>> &container)
     for (int i = 0; i < numsrow; i++) {
         row = mysql_fetch_row(courses_res);
         if (row != NULL) {
-            container.push_back(std::make_shared<course>(course(row[0], row[1])));
-            int why = container.size();
+            container.push_back(std::make_shared<course_pair>(course_pair(row[0], row[1])));
         }
     }
     mysql_free_result(courses_res);
     return true;
 }
 
-bool userSession::getTranscript(std::unordered_map<std::string, std::string> &container) {
+bool userSession::getTranscript(std::vector<std::shared_ptr<course_pair>> &container) {
     MYSQL_RES *transcript_res = db->query(
             "SELECT UoSCode, Grade FROM transcript WHERE StudId = " + std::to_string(id) + ";");
     if (transcript_res == NULL) {
@@ -81,7 +80,7 @@ bool userSession::getTranscript(std::unordered_map<std::string, std::string> &co
                 grade = row[1];
             else
                 grade = "NULL";
-            container.emplace(std::make_pair(code, grade));
+            container.push_back(std::make_shared<course_pair>(course_pair(row[0], grade)));
         }
     }
     mysql_free_result(transcript_res);

@@ -18,20 +18,19 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
 
         //Get current courses TODO: rewrite to API
-        std::vector<std::shared_ptr<course>> curCourses;
+        std::vector<std::shared_ptr<course_pair>> curCourses;
         loginedStu->getCurCourses(curCourses);
         /*
          * Current course list Demo
          */
         std::cout << "UoSCode      UosName" << std::endl;
-        for(std::shared_ptr<course> &c : curCourses){
+        for(std::shared_ptr<course_pair> &c : curCourses){
             std::cout << c->first << "     " << c->second << std::endl;
         }
         std::cout << std::endl;
 
         //Get transcript TODO: rewrite to API
-        //Maybe unordered_map is not necessary because the front-edn can get the key of picked course to show its detail
-        std::unordered_map<std::string, std::string> transcript;
+        std::vector<std::shared_ptr<course_pair>> transcript;
         loginedStu->getTranscript(transcript);
 
         /*
@@ -39,7 +38,7 @@ int main(int argc, char *argv[]) {
          */
         std::cout << "UoSCode      Grade" << std::endl;
         for(auto &c : transcript){
-            std::cout << c.first << "     " << c.second << std::endl;
+            std::cout << c->first << "     " << c->second << std::endl;
         }
         std::cout << std::endl;
 

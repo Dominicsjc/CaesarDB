@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include "dbInstance.h"
 
-typedef std::pair<std::string, std::string> course;
+typedef std::pair<std::string, std::string> course_pair;
 
 class userSession {
 private:
@@ -39,9 +39,9 @@ public:
 
     bool getLoginStatus();
 
-    bool getCurCourses(std::vector<std::shared_ptr<course>> &container);
+    bool getCurCourses(std::vector<std::shared_ptr<course_pair>> &container);
 
-    bool getTranscript(std::unordered_map<std::string, std::string> &container);
+    bool getTranscript(std::vector<std::shared_ptr<course_pair>> &container);
 
     bool getCourseDetail(const std::string &courseCode, std::vector<std::shared_ptr<std::string>> &container);
 };
