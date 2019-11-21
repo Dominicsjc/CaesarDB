@@ -8,6 +8,7 @@
 #include <mysql.h>
 #include <iostream>
 #include <string>
+#include <memory>
 
 class dbInstance {
 private:

@@ -29,8 +29,7 @@ bool userSession::getLoginStatus() {
     return login;
 }
 
-std::vector<course> userSession::getCurCourses() {
-    std::vector<course> res;
+bool userSession::getCurCourses(std::vector<std::shared_ptr<course>> &container) {
     auto timeNow = std::chrono::system_clock::now();
     std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
     struct tm *time = localtime(&curTime);
@@ -47,44 +46,79 @@ std::vector<course> userSession::getCurCourses() {
             " AND Year = " + year + " AND Semester = '" + quarter + "';");
     if (courses_res == NULL) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
-        return {};
+        return false;
     }
 
     MYSQL_ROW row;
     int numsrow = (int) mysql_num_rows(courses_res);
-    for(int i=0; i < numsrow; i++){
+    for (int i = 0; i < numsrow; i++) {
         row = mysql_fetch_row(courses_res);
-        if(row != NULL){
-            res.emplace_back(std::make_pair(row[0], row[1]));
+        if (row != NULL) {
+            container.push_back(std::make_shared<course>(course(row[0], row[1])));
+            int why = container.size();
         }
     }
     mysql_free_result(courses_res);
-    return res;
+    return true;
 }
 
-std::unordered_map<std::string, std::string> userSession::getTranscript(){
-    std::unordered_map<std::string, std::string> res;
-
-    MYSQL_RES *transcript_res = db->query("SELECT UoSCode, Grade FROM transcript WHERE StudId = " + std::to_string(id) + ";");
+bool userSession::getTranscript(std::unordered_map<std::string, std::string> &container) {
+    MYSQL_RES *transcript_res = db->query(
+            "SELECT UoSCode, Grade FROM transcript WHERE StudId = " + std::to_string(id) + ";");
     if (transcript_res == NULL) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
-        return {};
+        return false;
     }
 
     MYSQL_ROW row;
     int numsrow = (int) mysql_num_rows(transcript_res);
-    for(int i=0; i < numsrow; i++){
+    for (int i = 0; i < numsrow; i++) {
         row = mysql_fetch_row(transcript_res);
-        if(row != NULL){
+        if (row != NULL) {
             std::string code = row[0];
             std::string grade;
-            if(row[1])
+            if (row[1])
                 grade = row[1];
             else
                 grade = "NULL";
-            res.emplace(std::make_pair(code, grade));
+            container.emplace(std::make_pair(code, grade));
         }
     }
     mysql_free_result(transcript_res);
-    return res;
+    return true;
+}
+
+bool userSession::getCourseDetail(const std::string &courseCode, std::vector<std::shared_ptr<std::string>> &container) {
+    MYSQL_RES *detail_res = db->query(
+            "SELECT UoSCode, UoSName, Year, Semester, Enrollment, MaxEnrollment, Name, Grade FROM transcript NATURAL JOIN unitofstudy NATURAL JOIN uosoffering u INNER JOIN faculty f on (u.InstructorId = f.Id) WHERE UoSCode = '" +
+            courseCode + "' AND StudId = "+ std::to_string(id) + ";");
+    if (detail_res == NULL) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        return false;
+    }
+
+    MYSQL_ROW row;
+    int numsrow = (int) mysql_num_rows(detail_res);
+    if(numsrow != 0) {
+        row = mysql_fetch_row(detail_res);
+        if (row != NULL) {
+            for(int i = 0; i < 8; i++) {
+                if (i == 7 && !row[7]) {
+                    std::string *str = new std::string("NULL");
+                    std::shared_ptr<std::string> ptr(str);
+                    container.push_back(ptr);
+                } else {
+                    std::string *str = new std::string(row[i]);
+                    std::shared_ptr<std::string> ptr(str);
+                    container.push_back(ptr);
+                }
+            }
+        } else
+            return false;
+    } else{
+        std::cout << "Please enter a valid course code." << std::endl;
+        return false;
+    }
+    mysql_free_result(detail_res);
+    return true;
 }

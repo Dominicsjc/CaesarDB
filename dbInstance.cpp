@@ -24,6 +24,7 @@ dbInstance::dbInstance(const std::string &host, const std::string &user, const s
 dbInstance::~dbInstance() {
     proceduresFree();
     mysql_close(conn);
+    conn = nullptr;
 }
 
 void dbInstance::proceduresInitial() {

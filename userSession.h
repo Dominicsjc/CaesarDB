@@ -39,9 +39,11 @@ public:
 
     bool getLoginStatus();
 
-    std::vector<course> getCurCourses();
+    bool getCurCourses(std::vector<std::shared_ptr<course>> &container);
 
-    std::unordered_map<std::string, std::string> getTranscript();
+    bool getTranscript(std::unordered_map<std::string, std::string> &container);
+
+    bool getCourseDetail(const std::string &courseCode, std::vector<std::shared_ptr<std::string>> &container);
 };
 
 

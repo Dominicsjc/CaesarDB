@@ -18,20 +18,21 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
 
         //Get current courses TODO: rewrite to API
-        std::vector<course> curCourses = loginedStu->getCurCourses();
-
+        std::vector<std::shared_ptr<course>> curCourses;
+        loginedStu->getCurCourses(curCourses);
         /*
          * Current course list Demo
          */
         std::cout << "UoSCode      UosName" << std::endl;
-        for(const course &c : curCourses){
-            std::cout << c.first << "     " << c.second << std::endl;
+        for(std::shared_ptr<course> &c : curCourses){
+            std::cout << c->first << "     " << c->second << std::endl;
         }
         std::cout << std::endl;
 
         //Get transcript TODO: rewrite to API
         //Maybe unordered_map is not necessary because the front-edn can get the key of picked course to show its detail
-        std::unordered_map<std::string, std::string> transcript = loginedStu->getTranscript();
+        std::unordered_map<std::string, std::string> transcript;
+        loginedStu->getTranscript(transcript);
 
         /*
          * Transcript Demo
@@ -42,8 +43,22 @@ int main(int argc, char *argv[]) {
         }
         std::cout << std::endl;
 
+        //Get the detail of a arbitrary course TODO: rewrite to API
+        std::vector<std::shared_ptr<std::string>> courseDetail;
+        loginedStu->getCourseDetail("INFO1103", courseDetail);
+
+        /*
+         * Course detail Demo
+         */
+        std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment   Lecturer_Name   Grade" << std::endl;
+        for(auto &d: courseDetail){
+            std::cout << *d << "  ";
+        }
+        std::cout << std::endl;
+
         //Free and logout
         delete(loginedStu);
+        loginedStu = nullptr;
     } else{
         //TODO: Error message should be shown in the front-end and maintain on the login screen
         std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
@@ -52,6 +67,7 @@ int main(int argc, char *argv[]) {
 
     //Close DB
     delete(caesarDB);
+    caesarDB = nullptr;
 
     return 0;
 }
