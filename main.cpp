@@ -71,13 +71,10 @@ int main(int argc, char *argv[]) {
 userSession *login(const std::string &username, const std::string &passwd, dbInstance *curDB) {
     auto *newUser = new userSession(username, passwd, curDB);
     newUser->tryLogin();
-    if (newUser->getLoginStatus()) {
-        //std::cout << "Login successfully!" << std::endl;
-        return newUser;
-    } else {
-        //std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
+    if (!newUser->getLoginStatus()) {
         delete (newUser);
-        return nullptr;
+        newUser = nullptr;
     }
+    return newUser;
 }
 
