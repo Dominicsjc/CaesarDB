@@ -96,7 +96,7 @@ std::vector<std::string> userSession::getCourseDetail(const std::string &courseC
 
     MYSQL_RES *detail_res = db->query(
             "SELECT UoSCode, UoSName, Year, Semester, Enrollment, MaxEnrollment, Name, Grade FROM transcript NATURAL JOIN unitofstudy NATURAL JOIN uosoffering u INNER JOIN faculty f on (u.InstructorId = f.Id) WHERE UoSCode = '" +
-            courseCode + "' AND StudId = "+ std::to_string(id) + ";");
+            courseCode + "' AND StudId = " + std::to_string(id) + ";");
     if (detail_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         return {};
@@ -104,20 +104,20 @@ std::vector<std::string> userSession::getCourseDetail(const std::string &courseC
 
     MYSQL_ROW row;
     int numsrow = (int) mysql_num_rows(detail_res);
-    if(numsrow != 0) {
+    if (numsrow != 0) {
         row = mysql_fetch_row(detail_res);
         if (row != nullptr) {
-            for(int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++) {
                 std::string str;
                 if (i == 7 && !row[7])
                     str = "NULL";
-                 else
+                else
                     str = row[i];
                 res.emplace_back(str);
             }
         } else
             return {};
-    } else{
+    } else {
         std::cout << "Please enter a valid course code." << std::endl;
         return {};
     }

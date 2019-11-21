@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 
     //login Demo
     userSession *loginedStu = login("Harry Jenkins", "butterflY", caesarDB);
-    if(loginedStu){
+    if (loginedStu) {
         //TODO: OK message should be shown in the front-end and enter Student Menu
         std::cout << "Login successfully!" << std::endl;
         std::cout << std::endl;
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
          * Current course list Demo
          */
         std::cout << "UoSCode      UosName" << std::endl;
-        for(course_pair &c : curCourses){
+        for (course_pair &c : curCourses) {
             std::cout << c.first << "     " << c.second << std::endl;
         }
         std::cout << std::endl;
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
          * Transcript Demo
          */
         std::cout << "UoSCode      Grade" << std::endl;
-        for(course_pair &c : transcript){
+        for (course_pair &c : transcript) {
             std::cout << c.first << "     " << c.second << std::endl;
         }
         std::cout << std::endl;
@@ -46,23 +46,24 @@ int main(int argc, char *argv[]) {
         /*
          * Course detail Demo
          */
-        std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment   Lecturer_Name   Grade" << std::endl;
-        for(auto &d: courseDetail){
+        std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment   Lecturer_Name   Grade"
+                  << std::endl;
+        for (auto &d: courseDetail) {
             std::cout << d << "  ";
         }
         std::cout << std::endl;
 
         //Free and logout
-        delete(loginedStu);
+        delete (loginedStu);
         loginedStu = nullptr;
-    } else{
+    } else {
         //TODO: Error message should be shown in the front-end and maintain on the login screen
         std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
         std::cout << std::endl;
     }
 
     //Close DB
-    delete(caesarDB);
+    delete (caesarDB);
     caesarDB = nullptr;
 
     return 0;
