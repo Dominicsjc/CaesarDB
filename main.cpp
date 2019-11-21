@@ -6,17 +6,15 @@
 
 userSession *login(const std::string &username, const std::string &passwd, dbInstance *curDB);
 
-MYSQL *conn;
-
 int main(int argc, char *argv[]) {
     //Open DB
     auto *caesarDB = new dbInstance("localhost", "root", "bitdefender123", "project3-nudb");
 
-
-    userSession *newStu = login("Linda Smith", "lunch", caesarDB);
-    if(newStu){
+    //login Demo
+    userSession *LoginedStu = login("Linda Smith", "lunch", caesarDB);
+    if(LoginedStu){
         std::cout << "Login successfully!" << std::endl;
-        delete(newStu);
+        delete(LoginedStu);
     } else{
         std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
     }
