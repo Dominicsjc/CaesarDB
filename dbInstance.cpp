@@ -6,7 +6,7 @@
 
 dbInstance::dbInstance(const std::string &host, const std::string &user, const std::string &passwd,
                        const std::string &db) {
-    conn = mysql_init(NULL);
+    conn = mysql_init(nullptr);
     if (mysql_real_connect(
             conn,
             host.c_str(),
@@ -15,7 +15,7 @@ dbInstance::dbInstance(const std::string &host, const std::string &user, const s
             db.c_str(),
             0,
             NULL,
-            CLIENT_MULTI_RESULTS) == NULL) {
+            CLIENT_MULTI_RESULTS) == nullptr) {
         std::cerr << "Connect to MySQL failed!" << std::endl;
     }
     proceduresInitial();

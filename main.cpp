@@ -18,40 +18,37 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
 
         //Get current courses TODO: rewrite to API
-        std::vector<std::shared_ptr<course_pair>> curCourses;
-        loginedStu->getCurCourses(curCourses);
+        std::vector<course_pair> curCourses = loginedStu->getCurCourses();
         /*
          * Current course list Demo
          */
         std::cout << "UoSCode      UosName" << std::endl;
-        for(std::shared_ptr<course_pair> &c : curCourses){
-            std::cout << c->first << "     " << c->second << std::endl;
+        for(course_pair &c : curCourses){
+            std::cout << c.first << "     " << c.second << std::endl;
         }
         std::cout << std::endl;
 
         //Get transcript TODO: rewrite to API
-        std::vector<std::shared_ptr<course_pair>> transcript;
-        loginedStu->getTranscript(transcript);
+        std::vector<course_pair> transcript = loginedStu->getTranscript();
 
         /*
          * Transcript Demo
          */
         std::cout << "UoSCode      Grade" << std::endl;
-        for(auto &c : transcript){
-            std::cout << c->first << "     " << c->second << std::endl;
+        for(course_pair &c : transcript){
+            std::cout << c.first << "     " << c.second << std::endl;
         }
         std::cout << std::endl;
 
         //Get the detail of a arbitrary course TODO: rewrite to API
-        std::vector<std::shared_ptr<std::string>> courseDetail;
-        loginedStu->getCourseDetail("INFO1103", courseDetail);
+        std::vector<std::string> courseDetail = loginedStu->getCourseDetail("INFO1103");
 
         /*
          * Course detail Demo
          */
         std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment   Lecturer_Name   Grade" << std::endl;
         for(auto &d: courseDetail){
-            std::cout << *d << "  ";
+            std::cout << d << "  ";
         }
         std::cout << std::endl;
 

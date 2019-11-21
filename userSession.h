@@ -39,11 +39,11 @@ public:
 
     bool getLoginStatus();
 
-    bool getCurCourses(std::vector<std::shared_ptr<course_pair>> &container);
+    std::vector<course_pair> getCurCourses();
 
-    bool getTranscript(std::vector<std::shared_ptr<course_pair>> &container);
+    std::vector<course_pair> getTranscript();
 
-    bool getCourseDetail(const std::string &courseCode, std::vector<std::shared_ptr<std::string>> &container);
+    std::vector<std::string> getCourseDetail(const std::string &courseCode);
 };
 
 
