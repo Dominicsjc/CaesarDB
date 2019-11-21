@@ -7,6 +7,6 @@ include_directories(/usr/include/mysql)
 
 link_libraries(/var/lib/mysql)
 
-add_executable(CaesarDB main.cpp main.cpp)
+add_executable(CaesarDB main.cpp dbInstance.cpp dbInstance.h userSession.cpp userSession.h)
 
 target_link_libraries(CaesarDB mysqlclient)

@@ -1,41 +1,42 @@
-#include "mysql.h"
+#include "dbInstance.h"
+#include "userSession.h"
 
 #include <iostream>
+#include <string>
 
-using namespace std;
+userSession *login(const std::string &username, const std::string &passwd, dbInstance *curDB);
 
-MYSQL* conn;
+MYSQL *conn;
 
-int main(int argc, char* argv[]){
-    conn = mysql_init(NULL);
+int main(int argc, char *argv[]) {
+    //Open DB
+    auto *caesarDB = new dbInstance("localhost", "root", "bitdefender123", "project3-nudb");
 
-    // open connection
-    mysql_real_connect(
-            conn,
-            "localhost",
-            "root",
-            "bitdefender123",
-            "project3-nudb",
-            0,
-            NULL,
-            CLIENT_MULTI_RESULTS);
 
-    MYSQL_RES* res_set;
-    MYSQL_ROW row;
-    mysql_query(conn, "SELECT * FROM student;");
-    res_set = mysql_store_result(conn);
-    int numrows = (int)mysql_num_rows(res_set);
-
-    for(int i=0;i<numrows;i++){
-        row = mysql_fetch_row(res_set);
-        if(row != NULL){
-            cout << "ID: " << row[0] << endl;
-            cout << "Name: " << row[1] << endl;
-        }
+    userSession *newStu = login("Linda Smith", "lunch", caesarDB);
+    if(newStu){
+        std::cout << "Login successfully!" << std::endl;
+        delete(newStu);
+    } else{
+        std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
     }
-    mysql_free_result(res_set);
-    // close connection
-    mysql_close(conn);
+
+    //Close DB
+    delete(caesarDB);
+
     return 0;
+}
+
+userSession *login(const std::string &username, const std::string &passwd, dbInstance *curDB) {
+    auto *newUser = new userSession(username, passwd, curDB);
+    newUser->tryLogin();
+    if (newUser->getLoginStatus()) {
+        //std::cout << "Login successfully!" << std::endl;
+        return newUser;
+    } else {
+        //std::cout << "Username or passowrd is incorrect! Please try again." << std::endl;
+        delete (newUser);
+        return nullptr;
+    }
 }
 
