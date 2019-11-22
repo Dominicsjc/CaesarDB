@@ -15,6 +15,15 @@
 
 typedef std::pair<std::string, std::string> course_pair;
 
+typedef struct course_offering {
+    std::string code;
+    std::string name;
+    std::string semester;
+    int year;
+    int enrollment;
+    int maxEnrollment;
+} course_off;
+
 class userSession {
 private:
     dbInstance *db;
@@ -44,6 +53,8 @@ public:
     std::vector<course_pair> getTranscript();
 
     std::vector<std::string> getCourseDetail(const std::string &courseCode);
+
+    std::vector<course_off> getCoursesOffering();
 };
 
 

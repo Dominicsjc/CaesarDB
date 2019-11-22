@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
 
         //Get the detail of a arbitrary course TODO: rewrite to API
-        std::vector<std::string> courseDetail = loginedStu->getCourseDetail("INFO1103");
+        std::vector<std::string> courseDetail = loginedStu->getCourseDetail("INFO2110");
 
         /*
          * Course detail Demo
@@ -50,6 +50,21 @@ int main(int argc, char *argv[]) {
                   << std::endl;
         for (auto &d: courseDetail) {
             std::cout << d << "  ";
+        }
+        std::cout << std::endl;
+        std::cout << std::endl;
+
+        //Get specific courses offering TODO: rewrite to API
+        std::vector<course_off> coursesOffering = loginedStu->getCoursesOffering();
+
+        /*
+         * Courses offering Demo
+         */
+        std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment"
+                  << std::endl;
+        for (auto &c: coursesOffering) {
+            std::cout << c.code << "  " << c.name << "  " << c.semester << "  " << c.year << "  " << c.enrollment
+                      << "  " << c.maxEnrollment << std::endl;
         }
         std::cout << std::endl;
 

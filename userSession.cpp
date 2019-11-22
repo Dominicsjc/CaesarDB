@@ -124,3 +124,52 @@ std::vector<std::string> userSession::getCourseDetail(const std::string &courseC
     mysql_free_result(detail_res);
     return res;
 }
+
+std::vector<course_off> userSession::getCoursesOffering() {
+    std::vector<course_off> res;
+
+    auto timeNow = std::chrono::system_clock::now();
+    std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
+    struct tm *time = localtime(&curTime);
+    std::string year = std::to_string(time->tm_year + 1900);
+    std::string nextYear;
+    int month = time->tm_mon;
+    std::string quarter;
+    std::string nextQuarter;
+    if (month >= 0 && month <= 5) {
+        quarter = "Q1";
+        nextQuarter = "Q2";
+        nextYear = std::to_string(time->tm_year + 1900);
+    } else {
+        quarter = "Q2";
+        nextQuarter = "Q1";
+        nextYear = std::to_string(time->tm_year + 1901);
+    }
+
+    MYSQL_RES *offering_res = db->query(
+            "SELECT UoSCode, UoSName, Semester, Year, Enrollment, MaxEnrollment FROM unitofstudy NATURAL JOIN uosoffering WHERE (Year = " +
+            year + " AND Semester = '" + quarter + "') OR (Year = " + nextYear + " AND Semester = '" + nextQuarter +
+            "');");
+    if (offering_res == nullptr) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        return {};
+    }
+
+    MYSQL_ROW row;
+    int numsrow = (int) mysql_num_rows(offering_res);
+    for (int i = 0; i < numsrow; i++) {
+        row = mysql_fetch_row(offering_res);
+        if (row != nullptr) {
+            course_off c;
+            c.code = row[0];
+            c.name = row[1];
+            c.semester = row[2];
+            c.year = atoi(row[3]);
+            c.enrollment = atoi(row[4]);
+            c.maxEnrollment = atoi(row[5]);
+            res.emplace_back(c);
+        }
+    }
+    mysql_free_result(offering_res);
+    return res;
+}
