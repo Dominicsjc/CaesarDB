@@ -18,20 +18,15 @@ dbInstance::dbInstance(const std::string &host, const std::string &user, const s
             CLIENT_MULTI_RESULTS) == nullptr) {
         std::cerr << "Connect to MySQL failed!" << std::endl;
     }
-    proceduresInitial();
+    constraintCheckInitial();
 }
 
 dbInstance::~dbInstance() {
-    proceduresFree();
     mysql_close(conn);
     conn = nullptr;
 }
 
-void dbInstance::proceduresInitial() {
-
-}
-
-void dbInstance::proceduresFree() {
+void dbInstance::constraintCheckInitial() {
 
 }
 

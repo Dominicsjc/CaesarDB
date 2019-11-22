@@ -14,9 +14,7 @@ class dbInstance {
 private:
     MYSQL *conn;
 
-    static void proceduresInitial();
-
-    static void proceduresFree();
+    void constraintCheckInitial();
 
 public:
     dbInstance() = delete;
