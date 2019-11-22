@@ -14,7 +14,9 @@ class dbInstance {
 private:
     MYSQL *conn;
 
-    void constraintCheckInitial();
+    void proceduresInitial();
+
+    void enrollInitial();
 
 public:
     dbInstance() = delete;
@@ -23,7 +25,9 @@ public:
 
     ~dbInstance();
 
-    MYSQL_RES *query(const std::string &myQuery);
+    MYSQL_RES *retrievalQuery(const std::string &myQuery);
+
+    bool alterQuery(const std::string &myQuery);
 
 };
 

@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     auto *caesarDB = new dbInstance("localhost", "root", "bitdefender123", "project3-nudb");
 
     //login Demo
-    userSession *loginedStu = login("Harry Jenkins", "butterflY", caesarDB);
+    userSession *loginedStu = login("Linda Smith", "lunch", caesarDB);
     if (loginedStu) {
         //TODO: OK message should be shown in the front-end and enter Student Menu
         std::cout << "Login successfully!" << std::endl;
@@ -67,6 +67,46 @@ int main(int argc, char *argv[]) {
                       << "  " << c.maxEnrollment << std::endl;
         }
         std::cout << std::endl;
+
+        /*
+         * Enroll course Demo
+         */
+        int status_code = -1;
+        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3404", "Q2", 2019, status_code);
+        switch (status_code) {
+            case -1:
+                std::cerr << "Don't fetch the status!" << std::endl;
+                break;
+            case 0:
+                std::cout << "Enroll successfully." << std::endl;
+                break;
+            case 1:
+                std::cerr << "SQL error!" << std::endl;
+                break;
+            case 2:
+                std::cerr << "SQL warning." << std::endl;
+                break;
+            case 3:
+                std::cout << "You have enrolled this class of the course!" << std::endl;
+                break;
+            case 4:
+                std::cout << "Please enter correct information of a offering course!" << std::endl;
+                break;
+            case 5:
+                std::cout << "This class of the course have reached the maximum capacity." << std::endl;
+                break;
+            case 6: {
+                std::cout << "Some prerequisites are not be cleared!" << std::endl;
+                std::cout << "Prerequisites of the course:" << std::endl;
+                for (std::string &s : prerequisitesMissing)
+                    std::cout << s << "  ";
+                std::cout << std::endl;
+                break;
+            }
+            case 7: std::cerr << "Unknown terminate in the procedure!" << std::endl;
+                break;
+            default: std::cerr << "Unknown error!" << std::endl;
+        }
 
         //Free and logout
         delete (loginedStu);
