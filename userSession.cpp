@@ -9,7 +9,7 @@ void userSession::tryLogin() {
         return;
 
     MYSQL_RES *login_res = db->retrievalQuery(
-            "SELECT id FROM student WHERE Name = '" + name + "' AND Password = '" + password + "';");
+            "SELECT id FROM student WHERE BINARY Name = '" + name + "' AND BINARY Password = '" + password + "';");
     if (login_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         return;
@@ -189,7 +189,7 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
     MYSQL_RES *enroll_res = db->retrievalQuery(
             "CALL enrollProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
             std::to_string(year_in) + ", " +
-            curDate + ");");
+            curDate + ", @stat);");
     if (enroll_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         status_code = -1;
@@ -206,6 +206,9 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
         }
     }
 
+    MYSQL_RES *status_res = db->retrievalQuery("SELECT @stat;");
+    MYSQL_ROW status_row = mysql_fetch_row(status_res);
     mysql_free_result(enroll_res);
+    mysql_free_result(status_res);
     return res;
 }
