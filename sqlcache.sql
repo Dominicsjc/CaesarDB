@@ -57,3 +57,35 @@ BEGIN
 
 END $$
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS withdrawProcedure;
+DELIMITER $$
+CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), OUT status_code tinyint(1))
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- error
+        SET status_code = 1;
+        ROLLBACK;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- warning
+        SET status_code = 2;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN
+			-- invalid course
+            SET status_code = 3;
+		ELSE
+			DELETE FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y;
+            UPDATE uosoffering SET Enrollment = Enrollment -1 WHERE UoSCode = c AND Semester = s AND Year = y;
+            -- success
+            SET status_code = 0;
+        END IF;
+    COMMIT;
+END $$
+DELIMITER ;

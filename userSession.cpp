@@ -254,17 +254,17 @@ std::vector<course_prog> userSession::getCoursesInProgress() {
     MYSQL_RES *prog_res = db->retrievalQuery(
             "SELECT UoSCode, Semester, Year FROM transcript WHERE StudId = " +
             std::to_string(id) + " AND Grade IS NULL;");
-    if (prog_res == nullptr){
+    if (prog_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         return {};
     }
 
     MYSQL_ROW row;
     int numsrow = (int) mysql_num_rows(prog_res);
-    if(numsrow){
-        for(int i = 0; i < numsrow; i++){
+    if (numsrow) {
+        for (int i = 0; i < numsrow; i++) {
             row = mysql_fetch_row(prog_res);
-            if (row != nullptr){
+            if (row != nullptr) {
                 course_prog c;
                 c.code = row[0];
                 c.semester = row[1];
@@ -275,4 +275,27 @@ std::vector<course_prog> userSession::getCoursesInProgress() {
     }
     mysql_free_result(prog_res);
     return res;
+}
+
+void userSession::withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in,
+                                 int &status_code) {
+    bool tryWithdraw = db->alterQuery(
+            "CALL withdrawProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
+            std::to_string(year_in) + ", @stat);");
+    if(!tryWithdraw){
+        std::cerr << "Sometime wrong in the call withdraw procedure." << std::endl;
+        status_code = -1;
+        return;
+    }
+
+    MYSQL_RES *withdraw_res = db->retrievalQuery("SELECT @stat;");
+    if (withdraw_res == nullptr) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        status_code = -1;
+        return;
+    }
+    MYSQL_ROW status_row;
+    status_row = mysql_fetch_row(withdraw_res);
+    status_code = atoi(status_row[0]);
+    mysql_free_result(withdraw_res);
 }

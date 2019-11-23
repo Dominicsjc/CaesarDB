@@ -119,7 +119,33 @@ void dbInstance::withdrawInitial() {
         std::cerr << "Sometime wrong in the withdrawProcedure drop." << std::endl;
         return;
     }
-    std::string procedureQuery = "???";
+    std::string procedureQuery = "CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), OUT status_code tinyint(1))\n"
+                                 "BEGIN\n"
+                                 "\tDECLARE EXIT HANDLER FOR SQLEXCEPTION\n"
+                                 "    BEGIN\n"
+                                 "        -- error\n"
+                                 "        SET status_code = 1;\n"
+                                 "        ROLLBACK;\n"
+                                 "    END;\n"
+                                 "\n"
+                                 "    DECLARE EXIT HANDLER FOR SQLWARNING\n"
+                                 "    BEGIN\n"
+                                 "        -- warning\n"
+                                 "        SET status_code = 2;\n"
+                                 "        ROLLBACK;\n"
+                                 "    END;\n"
+                                 "    START TRANSACTION;\n"
+                                 "\t\tIF NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN\n"
+                                 "\t\t\t-- invalid course\n"
+                                 "            SET status_code = 3;\n"
+                                 "\t\tELSE\n"
+                                 "\t\t\tDELETE FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y;\n"
+                                 "            UPDATE uosoffering SET Enrollment = Enrollment -1 WHERE UoSCode = c AND Semester = s AND Year = y;\n"
+                                 "            -- success\n"
+                                 "            SET status_code = 0;\n"
+                                 "        END IF;\n"
+                                 "    COMMIT;\n"
+                                 "END";
     if(!this->alterQuery(procedureQuery)) {
         std::cerr << "Sometime wrong in the withdrawProcedure create." << std::endl;
         return;
