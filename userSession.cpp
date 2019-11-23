@@ -187,18 +187,18 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
     std::string curDate = "'" + curYear + "-" + curMon + "-" + curDay + "'";
 
     if (time->tm_mon < 6) {
-        if (year_in != time->tm_year + 1900){
+        if (year_in != time->tm_year + 1900) {
             status_code = 4;
             return res;
         }
     } else {
-        if(semester_in == "Q2"){
-            if(year_in != time->tm_year + 1900){
+        if (semester_in == "Q2") {
+            if (year_in != time->tm_year + 1900) {
                 status_code = 4;
                 return res;
             }
-        } else{
-            if(year_in != time->tm_year + 1900 +1){
+        } else {
+            if (year_in != time->tm_year + 1900 + 1) {
                 status_code = 4;
                 return res;
             }
@@ -245,5 +245,34 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
         }
         mysql_free_result(pre_res);
     }
+    return res;
+}
+
+std::vector<course_prog> userSession::getCoursesInProgress() {
+    std::vector<course_prog> res;
+
+    MYSQL_RES *prog_res = db->retrievalQuery(
+            "SELECT UoSCode, Semester, Year FROM transcript WHERE StudId = " +
+            std::to_string(id) + " AND Grade IS NULL;");
+    if (prog_res == nullptr){
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        return {};
+    }
+
+    MYSQL_ROW row;
+    int numsrow = (int) mysql_num_rows(prog_res);
+    if(numsrow){
+        for(int i = 0; i < numsrow; i++){
+            row = mysql_fetch_row(prog_res);
+            if (row != nullptr){
+                course_prog c;
+                c.code = row[0];
+                c.semester = row[1];
+                c.year = atoi(row[2]);
+                res.emplace_back(c);
+            }
+        }
+    }
+    mysql_free_result(prog_res);
     return res;
 }

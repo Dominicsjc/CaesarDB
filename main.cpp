@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         /*
          * Courses offering Demo
          */
-        std::cout << "UoSCode   UosName   Year   Semester   Enrollment   MaxEnrollment"
+        std::cout << "UoSCode   UosName   Semester   Year   Enrollment   MaxEnrollment"
                   << std::endl;
         for (auto &c: coursesOffering) {
             std::cout << c.code << "  " << c.name << "  " << c.semester << "  " << c.year << "  " << c.enrollment
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
          * Enroll course Demo
          */
         int status_code = -1;
-        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3315", "Q2", 2020, status_code);
+        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3404", "Q2", 2019, status_code);
         switch (status_code) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;
@@ -103,10 +103,26 @@ int main(int argc, char *argv[]) {
                 std::cout << std::endl;
                 break;
             }
-            case 7: std::cerr << "Unknown terminate in the procedure!" << std::endl;
+            case 7:
+                std::cerr << "Unknown terminate in the procedure!" << std::endl;
                 break;
-            default: std::cerr << "Unknown error!" << std::endl;
+            default:
+                std::cerr << "Unknown error!" << std::endl;
         }
+        std::cout << std::endl;
+
+        // Get courses in progress TODO: rewrite to API
+        std::vector<course_prog> coursesInProg = loginedStu->getCoursesInProgress();
+
+        /*
+         * Courses in progress Demo
+         */
+        std::cout << "UoSCode   Semester   Year"
+                  << std::endl;
+        for (auto &c: coursesInProg) {
+            std::cout << c.code << "  " << c.semester << "         " << c.year << "  " << std::endl;
+        }
+        std::cout << std::endl;
 
         //Free and logout
         delete (loginedStu);

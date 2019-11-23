@@ -43,6 +43,7 @@ bool dbInstance::alterQuery(const std::string &myQuery){
 
 void dbInstance::proceduresInitial() {
     enrollInitial();
+    withdrawInitial();
 }
 
 void dbInstance::enrollInitial() {
@@ -109,6 +110,18 @@ void dbInstance::enrollInitial() {
                                  "END";
     if(!this->alterQuery(procedureQuery)) {
         std::cerr << "Sometime wrong in the enrollProcedure create." << std::endl;
+        return;
+    }
+}
+
+void dbInstance::withdrawInitial() {
+    if(!this->alterQuery("DROP PROCEDURE IF EXISTS withdrawProcedure;")){
+        std::cerr << "Sometime wrong in the withdrawProcedure drop." << std::endl;
+        return;
+    }
+    std::string procedureQuery = "???";
+    if(!this->alterQuery(procedureQuery)) {
+        std::cerr << "Sometime wrong in the withdrawProcedure create." << std::endl;
         return;
     }
 }

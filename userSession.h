@@ -24,6 +24,12 @@ typedef struct course_offering {
     int maxEnrollment;
 } course_off;
 
+typedef struct course_NotFinished {
+    std::string code;
+    std::string semester;
+    int year;
+} course_prog;
+
 class userSession {
 private:
     dbInstance *db;
@@ -56,8 +62,9 @@ public:
 
     std::vector<course_off> getCoursesOffering();
 
-    // TODO: Explain means of different status_code
     std::vector<std::string> enrollCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
+
+    std::vector<course_prog> getCoursesInProgress();
 };
 
 

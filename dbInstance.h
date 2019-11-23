@@ -18,6 +18,8 @@ private:
 
     void enrollInitial();
 
+    void withdrawInitial();
+
 public:
     dbInstance() = delete;
 
