@@ -186,36 +186,45 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
     std::string curDay = std::to_string(time->tm_mday);
     std::string curDate = "'" + curYear + "-" + curMon + "-" + curDay + "'";
 
-    MYSQL_RES *enroll_res = db->retrievalQuery(
+    bool tryEnroll = db->alterQuery(
             "CALL enrollProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
             std::to_string(year_in) + ", " +
             curDate + ", @stat);");
+    if (!tryEnroll) {
+        std::cerr << "Sometime wrong in the call enroll procedure." << std::endl;
+        status_code = -1;
+        return res;
+    }
+
+    MYSQL_RES *enroll_res = db->retrievalQuery("SELECT @stat;");
     if (enroll_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         status_code = -1;
         return res;
     }
-
-    MYSQL_ROW row;
-    int numsrow = (int) mysql_num_rows(enroll_res);
-    if (numsrow) {
-        for (int i = 0; i < numsrow; i++) {
-            row = mysql_fetch_row(enroll_res);
-            if (row != nullptr)
-                res.emplace_back(row[0]);
-        }
-    }
+    MYSQL_ROW status_row;
+    status_row = mysql_fetch_row(enroll_res);
+    status_code = atoi(status_row[0]);
     mysql_free_result(enroll_res);
     enroll_res = nullptr;
 
-    MYSQL_RES *status_res = db->retrievalQuery("SELECT @stat;");
-    if (status_res == nullptr) {
-        std::cerr << "Sometime wrong int the query construction." << std::endl;
-        status_code = -1;
-        return res;
+    if (status_code == 6) {
+        MYSQL_RES *pre_res = db->retrievalQuery("SELECT * FROM tmp;");
+        if (pre_res == nullptr) {
+            std::cerr << "Sometime wrong int the query construction." << std::endl;
+            status_code = -1;
+            return res;
+        }
+        MYSQL_ROW pre_row;
+        int prenums = (int) mysql_num_rows(pre_res);
+        if (prenums) {
+            for (int i = 0; i < prenums; i++) {
+                pre_row = mysql_fetch_row(pre_res);
+                if (pre_row != nullptr)
+                    res.emplace_back(pre_row[0]);
+            }
+        }
+        mysql_free_result(pre_res);
     }
-    MYSQL_ROW status_row = mysql_fetch_row(status_res);
-    status_code = atoi(status_row[1]);
-    mysql_free_result(status_res);
     return res;
 }

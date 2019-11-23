@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
          * Enroll course Demo
          */
         int status_code = -1;
-        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3404", "Q2", 2019, status_code);
+        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3315", "Q2", 2020, status_code);
         switch (status_code) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;

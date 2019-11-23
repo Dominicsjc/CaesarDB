@@ -45,7 +45,8 @@ BEGIN
             END LOOP;
             CLOSE c;
             IF pre_req = 0 THEN
-				SELECT PrereqUoSCode FROM requires WHERE UoSCode = c AND d > EnforcedSince;
+                DROP TEMPORARY TABLE IF EXISTS tmp;
+				CREATE TEMPORARY TABLE tmp SELECT PrereqUoSCode FROM requires WHERE UoSCode = c AND d > EnforcedSince;
 			ELSE
                 INSERT INTO transcript VALUES (id, c, s, y, NULL);
                 UPDATE uosoffering SET Enrollment = Enrollment + 1 WHERE UoSCode = c AND Semester = s AND Year = y;

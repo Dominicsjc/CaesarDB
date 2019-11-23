@@ -29,6 +29,8 @@ public:
 
     bool alterQuery(const std::string &myQuery);
 
+    //MYSQL_RES *callQuery(const std::string &myQuery, bool &success);
+
 };
 
 

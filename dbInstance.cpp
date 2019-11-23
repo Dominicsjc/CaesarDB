@@ -41,6 +41,22 @@ bool dbInstance::alterQuery(const std::string &myQuery){
     return mysql_query(conn, tmpQ) == 0;
 }
 
+/*
+MYSQL_RES *dbInstance::callQuery(const std::string &myQuery, bool &success) {
+    MYSQL_RES *res_set;
+    const char *tmpQ = myQuery.c_str();
+    if(mysql_query(conn, tmpQ) != 0) {
+        std::cerr << "Call query failed!" << std::endl;
+        success = false;
+        return nullptr;
+    }
+    else
+        res_set = mysql_store_result(conn);
+    success = true;
+    return res_set;
+}
+*/
+
 void dbInstance::proceduresInitial() {
     enrollInitial();
 }
@@ -96,7 +112,8 @@ void dbInstance::enrollInitial() {
                                  "            END LOOP;\n"
                                  "            CLOSE c;\n"
                                  "            IF pre_req = 0 THEN\n"
-                                 "\t\t\t\tSELECT PrereqUoSCode FROM requires WHERE UoSCode = c AND d > EnforcedSince;\n"
+                                 "                DROP TEMPORARY TABLE IF EXISTS tmp;\n"
+                                 "\t\t\t\tCREATE TEMPORARY TABLE tmp SELECT PrereqUoSCode FROM requires WHERE UoSCode = c AND d > EnforcedSince;\n"
                                  "\t\t\tELSE\n"
                                  "                INSERT INTO transcript VALUES (id, c, s, y, NULL);\n"
                                  "                UPDATE uosoffering SET Enrollment = Enrollment + 1 WHERE UoSCode = c AND Semester = s AND Year = y;\n"
