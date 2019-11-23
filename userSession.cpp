@@ -181,7 +181,7 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
     auto timeNow = std::chrono::system_clock::now();
     std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
     struct tm *time = localtime(&curTime);
-    std::string curYear = std::to_string(time->tm_year + 1900);;
+    std::string curYear = std::to_string(time->tm_year + 1900);
     std::string curMon = std::to_string(time->tm_mon);
     std::string curDay = std::to_string(time->tm_mday);
     std::string curDate = "'" + curYear + "-" + curMon + "-" + curDay + "'";
