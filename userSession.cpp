@@ -186,6 +186,25 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
     std::string curDay = std::to_string(time->tm_mday);
     std::string curDate = "'" + curYear + "-" + curMon + "-" + curDay + "'";
 
+    if (time->tm_mon < 6) {
+        if (year_in != time->tm_year + 1900){
+            status_code = 4;
+            return res;
+        }
+    } else {
+        if(semester_in == "Q2"){
+            if(year_in != time->tm_year + 1900){
+                status_code = 4;
+                return res;
+            }
+        } else{
+            if(year_in != time->tm_year + 1900 +1){
+                status_code = 4;
+                return res;
+            }
+        }
+    }
+
     bool tryEnroll = db->alterQuery(
             "CALL enrollProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
             std::to_string(year_in) + ", " +
