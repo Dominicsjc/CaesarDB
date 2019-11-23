@@ -205,10 +205,17 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
                 res.emplace_back(row[0]);
         }
     }
+    mysql_free_result(enroll_res);
+    enroll_res = nullptr;
 
     MYSQL_RES *status_res = db->retrievalQuery("SELECT @stat;");
+    if (status_res == nullptr) {
+        std::cerr << "Sometime wrong int the query construction." << std::endl;
+        status_code = -1;
+        return res;
+    }
     MYSQL_ROW status_row = mysql_fetch_row(status_res);
-    mysql_free_result(enroll_res);
+    status_code = atoi(status_row[1]);
     mysql_free_result(status_res);
     return res;
 }

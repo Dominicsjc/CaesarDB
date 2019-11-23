@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
         std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3404", "Q2", 2019, status_code);
         switch (status_code) {
             case -1:
-                std::cerr << "Don't fetch the status!" << std::endl;
+                std::cerr << "Not get the status!" << std::endl;
                 break;
             case 0:
                 std::cout << "Enroll successfully." << std::endl;
