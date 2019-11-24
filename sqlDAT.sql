@@ -130,3 +130,32 @@ BEGIN
     COMMIT;
 END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS changeAddressProcedure;
+DELIMITER $$
+CREATE PROCEDURE changeAddressProcedure(IN i int(11), IN a varchar(50), OUT status_code tinyint(1))
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- error
+        SET status_code = 1;
+        ROLLBACK;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- warning
+        SET status_code = 2;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF NOT EXISTS ( SELECT * FROM student WHERE Id = i ) THEN
+			-- wrong id
+			SET status_code = 3;
+		ELSE
+			UPDATE student SET Address = a WHERE Id = i;
+            SET status_code = 0;
+		END IF;
+    COMMIT;
+END $$
+DELIMITER ;

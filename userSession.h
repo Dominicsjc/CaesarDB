@@ -82,6 +82,8 @@ public:
     profile getPersonalDetail();
 
     void changePasswd(const std::string &passwd, int &status_code);
+
+    void changeAddress(const std::string &address, int &status_code);
 };
 
 
