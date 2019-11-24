@@ -5,7 +5,7 @@
 #include "userSession.h"
 
 void userSession::tryLogin(const std::string &username, const std::string &passwd) {
-    if (username.empty() || passwd.empty())
+    if (username.empty() && passwd.empty())
         return;
 
     MYSQL_RES *login_res = db->retrievalQuery(

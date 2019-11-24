@@ -21,6 +21,12 @@ std::vector<course_prog> printInprog(userSession *stu);
 
 void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in);
 
+void printRecord(userSession *stu);
+
+void tryChangePasswd(userSession *stu, const std::string &newp);
+
+void tryChangeAddress(userSession *stu, const std::string &newa);
+
 int main(int argc, char *argv[]) {
     auto *caesarDB = new dbInstance("localhost", argv[1], argv[2], "project3-nudb");
     std::cout << "Welcome to CaeserDB system! Please first login." << std::endl;
@@ -202,6 +208,56 @@ int main(int argc, char *argv[]) {
                         break;
                     }
                     case 4: {
+                        bool back = false;
+                        while (!back) {
+                            system("clear");
+                            std::cout << "------------------- PERSONAL DETAIL -------------------" << std::endl;
+                            std::cout << "Here are your personal record" << std::endl;
+                            printRecord(loginedStu);
+                            std::cout << "You can enter the corresponding NUMBER to choose a following option:"
+                                      << std::endl;
+                            std::cout << "[1] Change your password" << std::endl;
+                            std::cout << "[2] Change your address" << std::endl;
+                            std::cout << "[3] Return" << std::endl;
+                            int pchoice = -1;
+                            while (pchoice == -1) {
+                                std::cout << "Enter your option NUMBER: ";
+                                std::cin >> pchoice;
+                                if (pchoice < 1 || pchoice > 3) {
+                                    pchoice = -1;
+                                    std::cout << "Please enter a valid option NUMBER!" << std::endl;
+                                }
+                            }
+                            switch (pchoice) {
+                                case 1: {
+                                    std::cout << "Enter your new password: ";
+                                    std::string passwd;
+                                    std::cin.ignore();
+                                    getline(std::cin, passwd);
+                                    tryChangePasswd(loginedStu, passwd);
+                                    std::cout << "Press Enter to return." << std::endl;
+                                    std::string tmp;
+                                    getline(std::cin, tmp);
+                                    break;
+                                }
+                                case 2: {
+                                    std::cout << "Enter your new address: ";
+                                    std::string add;
+                                    std::cin.ignore();
+                                    getline(std::cin, add);
+                                    tryChangeAddress(loginedStu, add);
+                                    std::cout << "Press Enter to return." << std::endl;
+                                    std::string tmp;
+                                    getline(std::cin, tmp);
+                                    break;
+                                }
+                                case 3: {
+                                    back = true;
+                                    break;
+                                }
+                                default:;
+                            }
+                        }
                         break;
                     }
                     case 5: {
@@ -372,6 +428,74 @@ void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::str
             break;
         case 4:
             std::cout << "Withdraw successfully but something wrong when checking low enrollment!" << std::endl;
+            break;
+        default:
+            std::cerr << "Unknown error!" << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void printRecord(userSession *stu){
+    profile record = stu->getPersonalDetail();
+    if (record.id == -1)
+        std::cerr << "Not fetch the correct profile!" << std::endl;
+    else {
+        std::cout << "Id: " << record.id << std::endl;
+        std::cout << "Name: " << record.name << std::endl;
+        std::cout << "Address: " << record.address << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void tryChangePasswd(userSession *stu, const std::string &newp){
+    int status_code = -1;
+    stu->changePasswd(newp, status_code);
+    switch (status_code) {
+        case -1:
+            std::cerr << "Not get the status!" << std::endl;
+            break;
+        case 0:
+            std::cout << "Change password successfully." << std::endl;
+            break;
+        case 1:
+            std::cerr << "SQL error!" << std::endl;
+            break;
+        case 2:
+            std::cerr << "SQL warning." << std::endl;
+            break;
+        case 3:
+            std::cout << "Please enter a valid id!" << std::endl;
+            break;
+        case 4:
+            std::cout << "Too long new password! Please use another password and try again." << std::endl;
+            break;
+        default:
+            std::cerr << "Unknown error!" << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void tryChangeAddress(userSession *stu, const std::string &newa){
+    int status_code = -1;
+    stu->changeAddress(newa, status_code);
+    switch (status_code) {
+        case -1:
+            std::cerr << "Not get the status!" << std::endl;
+            break;
+        case 0:
+            std::cout << "Change address successfully." << std::endl;
+            break;
+        case 1:
+            std::cerr << "SQL error!" << std::endl;
+            break;
+        case 2:
+            std::cerr << "SQL warning." << std::endl;
+            break;
+        case 3:
+            std::cout << "Please enter a valid id!" << std::endl;
+            break;
+        case 4:
+            std::cout << "Too long new address! Please use another address and try again." << std::endl;
             break;
         default:
             std::cerr << "Unknown error!" << std::endl;
