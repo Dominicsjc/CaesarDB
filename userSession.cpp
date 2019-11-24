@@ -295,6 +295,7 @@ bool userSession::withdrawCourse(const std::string &uoscode_in, const std::strin
         status_code = -1;
         return res;
     }
+
     MYSQL_ROW status_row;
     status_row = mysql_fetch_row(withdraw_res);
     status_code = atoi(status_row[0]);
@@ -307,9 +308,31 @@ bool userSession::withdrawCourse(const std::string &uoscode_in, const std::strin
         }
         MYSQL_ROW warning_row;
         warning_row = mysql_fetch_row(warning_res);
-        if(atoi(warning_row[0]) == 1)
+        if (atoi(warning_row[0]) == 1)
             res = true;
     }
     mysql_free_result(withdraw_res);
     return res;
+}
+
+profile userSession::getPersonalDetail() {
+    profile p;
+    p.id = -1;
+    p.name = "";
+    p.address = "";
+
+    MYSQL_RES *profile_res = db->retrievalQuery(
+            "SELECT Name, Address FROM student WHERE Id = " + std::to_string(id) + ";");
+    if (profile_res == nullptr) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        return p;
+    }
+
+    MYSQL_ROW profile_row;
+    profile_row = mysql_fetch_row(profile_res);
+    p.id = id;
+    p.name = profile_row[0];
+    p.address = profile_row[1];
+
+    return p;
 }

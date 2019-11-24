@@ -153,6 +153,14 @@ void dbInstance::withdrawInitial() {
     }
 }
 
+void dbInstance::changePasswdInitial() {
+
+}
+
+void dbInstance::changeAddressInitial() {
+
+}
+
 void dbInstance::lowEnrollmentTriggerInitial() {
     if(!this->alterQuery("DROP TRIGGER IF EXISTS lowEnrollmentTrigger;")){
         std::cerr << "Sometime wrong in the lowEnrollmentTrigger drop." << std::endl;

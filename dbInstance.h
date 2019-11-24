@@ -20,6 +20,10 @@ private:
 
     void withdrawInitial();
 
+    void changePasswdInitial();
+
+    void changeAddressInitial();
+
     void lowEnrollmentTriggerInitial();
 
 public:

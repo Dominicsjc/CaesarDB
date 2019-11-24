@@ -34,7 +34,7 @@ typedef struct personal_record {
     int id;
     std::string name;
     std::string address;
-}profile;
+} profile;
 
 class userSession {
 private:
@@ -71,11 +71,15 @@ public:
 
     std::vector<course_off> getCoursesOffering();
 
-    std::vector<std::string> enrollCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
+    std::vector<std::string>
+    enrollCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
 
     std::vector<course_prog> getCoursesInProgress();
 
-    bool withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
+    bool
+    withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
+
+    profile getPersonalDetail();
 };
 
 

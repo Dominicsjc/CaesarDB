@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;
                 break;
-            case 0:{
+            case 0: {
                 std::cout << "Withdraw successfully." << std::endl;
                 if (lowWarning)
                     std::cout << "Warning: The course's enrollment goes below 50% of the MaxEnrollment!" << std::endl;
@@ -156,6 +156,18 @@ int main(int argc, char *argv[]) {
                 std::cerr << "Unknown error!" << std::endl;
         }
         std::cout << std::endl;
+
+        /*
+         * Show personal record Demo
+         */
+        profile record = loginedStu->getPersonalDetail();
+        if (record.id == -1)
+            std::cerr << "Not fetch the correct profile!" << std::endl;
+        else {
+            std::cout << "Id: " << record.id << std::endl;
+            std::cout << "Name: " << record.name << std::endl;
+            std::cout << "Address: " << record.address << std::endl;
+        }
 
         //Free and logout
         delete (loginedStu);
