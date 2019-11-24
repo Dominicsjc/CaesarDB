@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     auto *caesarDB = new dbInstance("localhost", "root", "bitdefender123", "project3-nudb");
 
     //login Demo
-    userSession *loginedStu = login("Linda Smith", "lunch", caesarDB);
+    userSession *loginedStu = login("Harry Jenkins", "butterflY", caesarDB);
     if (loginedStu) {
         //TODO: OK message should be shown in the front-end and enter Student Menu
         std::cout << "Login successfully!" << std::endl;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
          * Enroll course Demo
          */
         int status_code = -1;
-        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("INFO3404", "Q2", 2019, status_code);
+        std::vector<std::string> prerequisitesMissing = loginedStu->enrollCourse("COMP5046", "Q1", 2020, status_code);
         switch (status_code) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
          * Withdraw course and low enrollment warning Demo
          */
         status_code = -1;
-        bool lowWarning = loginedStu->withdrawCourse("COMP2007", "Q2", 2019, status_code);
+        bool lowWarning = loginedStu->withdrawCourse("INFO1105", "Q2", 2019, status_code);
         //bool lowWarning = loginedStu->withdrawCourse("INFO3315", "Q2", 2019, status_code);
         switch (status_code) {
             case -1:
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
          * Change password Demo
          */
         status_code = -1;
-        loginedStu->changePasswd("lunch123456", status_code);
+        loginedStu->changePasswd("butterflY123", status_code);
         switch (status_code) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;

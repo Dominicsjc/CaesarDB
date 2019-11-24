@@ -122,7 +122,7 @@ void dbInstance::withdrawInitial() {
         std::cerr << "Sometime wrong in the withdrawProcedure drop." << std::endl;
         return;
     }
-    std::string procedureQuery = "CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), OUT status_code tinyint(1))\n"
+    std::string procedureQuery = "CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), IN cs char(2), IN cy int (11), OUT status_code tinyint(1))\n"
                                  "BEGIN\n"
                                  "\tDECLARE EXIT HANDLER FOR SQLEXCEPTION\n"
                                  "    BEGIN\n"
@@ -138,7 +138,7 @@ void dbInstance::withdrawInitial() {
                                  "        ROLLBACK;\n"
                                  "    END;\n"
                                  "    START TRANSACTION;\n"
-                                 "\t\tIF NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN\n"
+                                 "\t\tIF y < cy OR (y = cy AND s <> cs) OR NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN\n"
                                  "\t\t\t-- invalid course\n"
                                  "            SET status_code = 3;\n"
                                  "\t\tELSE\n"

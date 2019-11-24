@@ -61,7 +61,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS withdrawProcedure;
 DELIMITER $$
-CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), OUT status_code tinyint(1))
+CREATE PROCEDURE withdrawProcedure(IN id int(11), IN c char(20), IN s char(2), IN y int(11), IN cs char(2), IN cy int (11), OUT status_code tinyint(1))
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -77,7 +77,7 @@ BEGIN
         ROLLBACK;
     END;
     START TRANSACTION;
-		IF NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN
+		IF y < cy OR (y = cy AND s <> cs) OR NOT EXISTS ( SELECT * FROM transcript WHERE StudId = id AND UoSCode = c AND Semester = s AND Year = y AND Grade IS NULL ) THEN
 			-- invalid course
             SET status_code = 3;
 		ELSE

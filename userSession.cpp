@@ -251,9 +251,20 @@ userSession::enrollCourse(const std::string &uoscode_in, const std::string &seme
 std::vector<course_prog> userSession::getCoursesInProgress() {
     std::vector<course_prog> res;
 
+    auto timeNow = std::chrono::system_clock::now();
+    std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
+    struct tm *time = localtime(&curTime);
+    std::string year = std::to_string(time->tm_year + 1900);
+    int month = time->tm_mon;
+    std::string quarter;
+    if (month >= 0 && month <= 5)
+        quarter = "Q1";
+    else
+        quarter = "Q2";
+
     MYSQL_RES *prog_res = db->retrievalQuery(
-            "SELECT UoSCode, Semester, Year FROM transcript WHERE StudId = " +
-            std::to_string(id) + " AND Grade IS NULL;");
+            "SELECT UoSCode, Semester, Year FROM transcript WHERE StudId = " + std::to_string(id) +
+            " AND Grade IS NULL AND ((Year = " + year + " AND Semester = '" + quarter + "') OR (Year > " + year + "));");
     if (prog_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         return {};
@@ -280,9 +291,21 @@ std::vector<course_prog> userSession::getCoursesInProgress() {
 bool userSession::withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in,
                                  int &status_code) {
     bool res = false;
+
+    auto timeNow = std::chrono::system_clock::now();
+    std::time_t curTime = std::chrono::system_clock::to_time_t(timeNow);
+    struct tm *time = localtime(&curTime);
+    std::string year = std::to_string(time->tm_year + 1900);
+    int month = time->tm_mon;
+    std::string quarter;
+    if (month >= 0 && month <= 5)
+        quarter = "Q1";
+    else
+        quarter = "Q2";
+
     bool tryWithdraw = db->alterQuery(
             "CALL withdrawProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
-            std::to_string(year_in) + ", @stat);");
+            std::to_string(year_in) + ", '" + quarter + "', " + year + ", @stat);");
     if (!tryWithdraw) {
         std::cerr << "Sometime wrong in the call withdraw procedure." << std::endl;
         status_code = -1;
@@ -337,8 +360,8 @@ profile userSession::getPersonalDetail() {
     return p;
 }
 
-void userSession::changePasswd(const std::string &passwd, int &status_code){
-    if (passwd.length() > 10){
+void userSession::changePasswd(const std::string &passwd, int &status_code) {
+    if (passwd.length() > 10) {
         status_code = 4;
         return;
     }
