@@ -17,6 +17,10 @@ std::vector<course_off> printOffering(userSession *stu);
 
 void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in);
 
+std::vector<course_prog> printInprog(userSession *stu);
+
+void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in);
+
 int main(int argc, char *argv[]) {
     auto *caesarDB = new dbInstance("localhost", argv[1], argv[2], "project3-nudb");
     std::cout << "Welcome to CaeserDB system! Please first login." << std::endl;
@@ -88,12 +92,12 @@ int main(int argc, char *argv[]) {
                                             break;
                                         }
                                     }
-                                }
                                     break;
+                                }
                                 case 2: {
                                     back = true;
-                                }
                                     break;
+                                }
                                 default:;
                             }
                         }
@@ -128,7 +132,8 @@ int main(int argc, char *argv[]) {
                                         if (no < 1 || no > info.size()) {
                                             std::cout << "Please enter a valid NO.!" << std::endl;
                                         } else {
-                                            tryEnroll(loginedStu, info[no - 1].code, info[no - 1].semester, info[no - 1].year);
+                                            tryEnroll(loginedStu, info[no - 1].code, info[no - 1].semester,
+                                                      info[no - 1].year);
                                             std::cin.ignore();
                                             std::cout << "Press Enter to return." << std::endl;
                                             std::string tmp;
@@ -136,18 +141,64 @@ int main(int argc, char *argv[]) {
                                             break;
                                         }
                                     }
-                                }
                                     break;
+                                }
                                 case 2: {
                                     back = true;
-                                }
                                     break;
+                                }
                                 default:;
                             }
                         }
                         break;
                     }
                     case 3: {
+                        bool back = false;
+                        while (!back) {
+                            system("clear");
+                            std::cout << "------------------- WITHDRAW -------------------" << std::endl;
+                            std::cout << "Here are yours courses in progress can be withdrawn:" << std::endl;
+                            std::vector<course_prog> info = printInprog(loginedStu);
+                            std::cout << "You can enter the corresponding NUMBER to choose a following option:"
+                                      << std::endl;
+                            std::cout << "[1] Withdraw a course" << std::endl;
+                            std::cout << "[2] Return" << std::endl;
+                            int wchoice = -1;
+                            while (wchoice == -1) {
+                                std::cout << "Enter your option NUMBER: ";
+                                std::cin >> wchoice;
+                                if (wchoice < 1 || wchoice > 2) {
+                                    wchoice = -1;
+                                    std::cout << "Please enter a valid option NUMBER!" << std::endl;
+                                }
+                            }
+                            switch (wchoice) {
+                                case 1: {
+                                    while (1) {
+                                        std::cout << "Enter the course NO. shown above you want to withdraw: ";
+                                        int no;
+                                        std::cin >> no;
+                                        if (no < 1 || no > info.size()) {
+                                            std::cout << "Please enter a valid NO.!" << std::endl;
+                                        } else {
+                                            tryWithdraw(loginedStu, info[no - 1].code, info[no - 1].semester,
+                                                      info[no - 1].year);
+                                            std::cin.ignore();
+                                            std::cout << "Press Enter to return." << std::endl;
+                                            std::string tmp;
+                                            getline(std::cin, tmp);
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                                case 2: {
+                                    back = true;
+                                    break;
+                                }
+                                default:;
+                            }
+                        }
                         break;
                     }
                     case 4: {
@@ -169,6 +220,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    delete (caesarDB);
+    caesarDB = nullptr;
     return 0;
 }
 
@@ -227,7 +280,8 @@ std::vector<course_off> printOffering(userSession *stu) {
               << std::endl;
     for (int i = 0; i < (int) coursesOffering.size(); i++) {
         course_off &c = coursesOffering[i];
-        std::cout << i + 1 << ".  " << c.code << "  " << c.name << "  " << c.semester << "  " << c.year << "  " << c.enrollment
+        std::cout << i + 1 << ".  " << c.code << "  " << c.name << "  " << c.semester << "  " << c.year << "  "
+                  << c.enrollment
                   << "  " << c.maxEnrollment << std::endl;
     }
     std::cout << std::endl;
@@ -235,7 +289,7 @@ std::vector<course_off> printOffering(userSession *stu) {
     return coursesOffering;
 }
 
-void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in){
+void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in) {
     std::cout << std::endl;
     int status_code = -1;
     std::vector<std::string> prerequisitesMissing = stu->enrollCourse(uoscode_in, semester_in, year_in, status_code);
@@ -271,6 +325,53 @@ void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::strin
         }
         case 7:
             std::cerr << "Unknown terminate in the procedure!" << std::endl;
+            break;
+        default:
+            std::cerr << "Unknown error!" << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+std::vector<course_prog> printInprog(userSession *stu){
+    std::vector<course_prog> coursesInProg = stu->getCoursesInProgress();
+
+    std::cout << "    UoSCode   Semester   Year"
+              << std::endl;
+    for (int i = 0; i < (int) coursesInProg.size(); i++) {
+        course_prog &c = coursesInProg[i];
+        std::cout << i + 1 << ".  " << c.code << "  " << c.semester << "         " << c.year << "  " << std::endl;
+    }
+    std::cout << std::endl;
+
+    return coursesInProg;
+}
+
+void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in){
+    std::cout << std::endl;
+    int status_code = -1;
+    bool lowWarning = stu->withdrawCourse(uoscode_in, semester_in, year_in, status_code);
+    //bool lowWarning = loginedStu->withdrawCourse("INFO3315", "Q2", 2019, status_code);
+    switch (status_code) {
+        case -1:
+            std::cerr << "Not get the status!" << std::endl;
+            break;
+        case 0: {
+            std::cout << "Withdraw successfully." << std::endl;
+            if (lowWarning)
+                std::cout << "Warning: The course's enrollment goes below 50% of the MaxEnrollment!" << std::endl;
+            break;
+        }
+        case 1:
+            std::cerr << "SQL error!" << std::endl;
+            break;
+        case 2:
+            std::cerr << "SQL warning." << std::endl;
+            break;
+        case 3:
+            std::cout << "Please choose a valid course in progress!" << std::endl;
+            break;
+        case 4:
+            std::cout << "Withdraw successfully but something wrong when checking low enrollment!" << std::endl;
             break;
         default:
             std::cerr << "Unknown error!" << std::endl;
