@@ -30,6 +30,12 @@ typedef struct course_NotFinished {
     int year;
 } course_prog;
 
+typedef struct personal_record {
+    int id;
+    std::string name;
+    std::string address;
+}profile;
+
 class userSession {
 private:
     dbInstance *db;
