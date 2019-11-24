@@ -13,6 +13,10 @@ void printTranscript(userSession *stu);
 
 bool printCourseDetail(userSession *stu, const std::string &code);
 
+std::vector<course_off> printOffering(userSession *stu);
+
+void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in);
+
 int main(int argc, char *argv[]) {
     auto *caesarDB = new dbInstance("localhost", argv[1], argv[2], "project3-nudb");
     std::cout << "Welcome to CaeserDB system! Please first login." << std::endl;
@@ -96,6 +100,51 @@ int main(int argc, char *argv[]) {
                         break;
                     }
                     case 2: {
+                        bool back = false;
+                        while (!back) {
+                            system("clear");
+                            std::cout << "------------------- ENROLL -------------------" << std::endl;
+                            std::cout << "Here are courses currently offering:" << std::endl;
+                            std::vector<course_off> info = printOffering(loginedStu);
+                            std::cout << "You can enter the corresponding NUMBER to choose a following option:"
+                                      << std::endl;
+                            std::cout << "[1] Enroll a course" << std::endl;
+                            std::cout << "[2] Return" << std::endl;
+                            int echoice = -1;
+                            while (echoice == -1) {
+                                std::cout << "Enter your option NUMBER: ";
+                                std::cin >> echoice;
+                                if (echoice < 1 || echoice > 2) {
+                                    echoice = -1;
+                                    std::cout << "Please enter a valid option NUMBER!" << std::endl;
+                                }
+                            }
+                            switch (echoice) {
+                                case 1: {
+                                    while (1) {
+                                        std::cout << "Enter the course NO. shown above you want to enroll: ";
+                                        int no;
+                                        std::cin >> no;
+                                        if (no < 1 || no > info.size()) {
+                                            std::cout << "Please enter a valid NO.!" << std::endl;
+                                        } else {
+                                            tryEnroll(loginedStu, info[no - 1].code, info[no - 1].semester, info[no - 1].year);
+                                            std::cin.ignore();
+                                            std::cout << "Press Enter to return." << std::endl;
+                                            std::string tmp;
+                                            getline(std::cin, tmp);
+                                            break;
+                                        }
+                                    }
+                                }
+                                    break;
+                                case 2: {
+                                    back = true;
+                                }
+                                    break;
+                                default:;
+                            }
+                        }
                         break;
                     }
                     case 3: {
@@ -169,4 +218,62 @@ bool printCourseDetail(userSession *stu, const std::string &code) {
     std::cout << std::endl;
 
     return true;
+}
+
+std::vector<course_off> printOffering(userSession *stu) {
+    std::vector<course_off> coursesOffering = stu->getCoursesOffering();
+
+    std::cout << "    UoSCode   UosName          Semester   Year   Enrollment   MaxEnrollment"
+              << std::endl;
+    for (int i = 0; i < (int) coursesOffering.size(); i++) {
+        course_off &c = coursesOffering[i];
+        std::cout << i + 1 << ".  " << c.code << "  " << c.name << "  " << c.semester << "  " << c.year << "  " << c.enrollment
+                  << "  " << c.maxEnrollment << std::endl;
+    }
+    std::cout << std::endl;
+
+    return coursesOffering;
+}
+
+void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in){
+    std::cout << std::endl;
+    int status_code = -1;
+    std::vector<std::string> prerequisitesMissing = stu->enrollCourse(uoscode_in, semester_in, year_in, status_code);
+    switch (status_code) {
+        case -1:
+            std::cerr << "Not get the status!" << std::endl;
+            break;
+        case 0:
+            std::cout << "Enroll successfully." << std::endl;
+            break;
+        case 1:
+            std::cerr << "SQL error!" << std::endl;
+            break;
+        case 2:
+            std::cerr << "SQL warning." << std::endl;
+            break;
+        case 3:
+            std::cout << "You have enrolled this class of the course!" << std::endl;
+            break;
+        case 4:
+            std::cout << "Please enter correct information of a offering course!" << std::endl;
+            break;
+        case 5:
+            std::cout << "This class of the course have reached the maximum capacity." << std::endl;
+            break;
+        case 6: {
+            std::cout << "Some prerequisites are not be cleared!" << std::endl;
+            std::cout << "Prerequisites of the course:" << std::endl;
+            for (std::string &s : prerequisitesMissing)
+                std::cout << s << "  ";
+            std::cout << std::endl;
+            break;
+        }
+        case 7:
+            std::cerr << "Unknown terminate in the procedure!" << std::endl;
+            break;
+        default:
+            std::cerr << "Unknown error!" << std::endl;
+    }
+    std::cout << std::endl;
 }
