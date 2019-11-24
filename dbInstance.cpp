@@ -19,6 +19,7 @@ dbInstance::dbInstance(const std::string &host, const std::string &user, const s
         std::cerr << "Connect to MySQL failed!" << std::endl;
     }
     proceduresInitial();
+    lowEnrollmentTriggerInitial();
 }
 
 dbInstance::~dbInstance() {
@@ -148,6 +149,25 @@ void dbInstance::withdrawInitial() {
                                  "END";
     if(!this->alterQuery(procedureQuery)) {
         std::cerr << "Sometime wrong in the withdrawProcedure create." << std::endl;
+        return;
+    }
+}
+
+void dbInstance::lowEnrollmentTriggerInitial() {
+    if(!this->alterQuery("DROP TRIGGER IF EXISTS lowEnrollmentTrigger;")){
+        std::cerr << "Sometime wrong in the lowEnrollmentTrigger drop." << std::endl;
+        return;
+    }
+    std::string triggerQuery = "CREATE TRIGGER lowEnrollmentTrigger AFTER UPDATE ON uosoffering\n"
+                               "\tFOR EACH ROW\n"
+                               "    BEGIN\n"
+                               "\t\tSET @low = 0;\n"
+                               "        IF NEW.Enrollment < NEW.MaxEnrollment / 2 THEN\n"
+                               "\t\t\tSET @low = 1;\n"
+                               "\t\tEND IF;\n"
+                               "    END";
+    if(!this->alterQuery(triggerQuery)){
+        std::cerr << "Sometime wrong in the lowEnrollmentTrigger create." << std::endl;
         return;
     }
 }

@@ -125,17 +125,21 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
 
         /*
-         * Withdraw course Demo
+         * Withdraw course and low enrollment warning Demo
          */
         status_code = -1;
-        loginedStu->withdrawCourse("COMP2007", "Q2", 2019, status_code);
+        bool lowWarning = loginedStu->withdrawCourse("COMP2007", "Q2", 2019, status_code);
+        //bool lowWarning = loginedStu->withdrawCourse("INFO3315", "Q2", 2019, status_code);
         switch (status_code) {
             case -1:
                 std::cerr << "Not get the status!" << std::endl;
                 break;
-            case 0:
+            case 0:{
                 std::cout << "Withdraw successfully." << std::endl;
+                if (lowWarning)
+                    std::cout << "Warning: The course's enrollment goes below 50% of the MaxEnrollment!" << std::endl;
                 break;
+            }
             case 1:
                 std::cerr << "SQL error!" << std::endl;
                 break;
@@ -144,6 +148,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 3:
                 std::cout << "Please choose a valid course in progress!" << std::endl;
+                break;
+            case 4:
+                std::cout << "Withdraw successfully but something wrong when checking low enrollment!" << std::endl;
                 break;
             default:
                 std::cerr << "Unknown error!" << std::endl;

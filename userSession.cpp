@@ -277,25 +277,39 @@ std::vector<course_prog> userSession::getCoursesInProgress() {
     return res;
 }
 
-void userSession::withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in,
+bool userSession::withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in,
                                  int &status_code) {
+    bool res = false;
     bool tryWithdraw = db->alterQuery(
             "CALL withdrawProcedure(" + std::to_string(id) + ", '" + uoscode_in + "', '" + semester_in + "', " +
             std::to_string(year_in) + ", @stat);");
-    if(!tryWithdraw){
+    if (!tryWithdraw) {
         std::cerr << "Sometime wrong in the call withdraw procedure." << std::endl;
         status_code = -1;
-        return;
+        return res;
     }
 
     MYSQL_RES *withdraw_res = db->retrievalQuery("SELECT @stat;");
     if (withdraw_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         status_code = -1;
-        return;
+        return res;
     }
     MYSQL_ROW status_row;
     status_row = mysql_fetch_row(withdraw_res);
     status_code = atoi(status_row[0]);
+    if (status_code == 0) {
+        MYSQL_RES *warning_res = db->retrievalQuery("SELECT @low;");
+        if (warning_res == nullptr) {
+            std::cerr << "Sometime wrong in the low enrollment check." << std::endl;
+            status_code = 4;
+            return res;
+        }
+        MYSQL_ROW warning_row;
+        warning_row = mysql_fetch_row(warning_res);
+        if(atoi(warning_row[0]) == 1)
+            res = true;
+    }
     mysql_free_result(withdraw_res);
+    return res;
 }

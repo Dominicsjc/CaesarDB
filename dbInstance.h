@@ -20,6 +20,8 @@ private:
 
     void withdrawInitial();
 
+    void lowEnrollmentTriggerInitial();
+
 public:
     dbInstance() = delete;
 
