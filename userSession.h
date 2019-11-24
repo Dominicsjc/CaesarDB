@@ -80,6 +80,8 @@ public:
     withdrawCourse(const std::string &uoscode_in, const std::string &semester_in, const int &year_in, int &status_code);
 
     profile getPersonalDetail();
+
+    void changePasswd(const std::string &passwd, int &status_code);
 };
 
 

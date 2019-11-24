@@ -101,3 +101,32 @@ CREATE TRIGGER lowEnrollmentTrigger AFTER UPDATE ON uosoffering
 		END IF;
     END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS changePasswdProcedure;
+DELIMITER $$
+CREATE PROCEDURE changePasswdProcedure(IN i int(11), IN p varchar(10), OUT status_code tinyint(1))
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- error
+        SET status_code = 1;
+        ROLLBACK;
+    END;
+
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        -- warning
+        SET status_code = 2;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF NOT EXISTS ( SELECT * FROM student WHERE Id = i ) THEN
+			-- wrong id
+			SET status_code = 3;
+		ELSE
+			UPDATE student SET Password = p WHERE Id = i;
+            SET status_code = 0;
+		END IF;
+    COMMIT;
+END $$
+DELIMITER ;

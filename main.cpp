@@ -168,6 +168,37 @@ int main(int argc, char *argv[]) {
             std::cout << "Name: " << record.name << std::endl;
             std::cout << "Address: " << record.address << std::endl;
         }
+        std::cout << std::endl;
+
+        /*
+         * Change password Demo
+         */
+        status_code = -1;
+        loginedStu->changePasswd("lunch123456", status_code);
+        switch (status_code) {
+            case -1:
+                std::cerr << "Not get the status!" << std::endl;
+                break;
+            case 0:
+                std::cout << "Change password successfully." << std::endl;
+                break;
+            case 1:
+                std::cerr << "SQL error!" << std::endl;
+                break;
+            case 2:
+                std::cerr << "SQL warning." << std::endl;
+                break;
+            case 3:
+                std::cout << "Please choose a valid course in progress!" << std::endl;
+                break;
+            case 4:
+                std::cout << "Too long new password! Please use another password and try again." << std::endl;
+                break;
+            default:
+                std::cerr << "Unknown error!" << std::endl;
+        }
+        std::cout << std::endl;
+
 
         //Free and logout
         delete (loginedStu);

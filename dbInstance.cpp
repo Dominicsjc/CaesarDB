@@ -160,7 +160,31 @@ void dbInstance::changePasswdInitial() {
         std::cerr << "Sometime wrong in the changePasswdProcedure drop." << std::endl;
         return;
     }
-    std::string procedureQuery = "???";
+    std::string procedureQuery = "CREATE PROCEDURE changePasswdProcedure(IN i int(11), IN p varchar(10), OUT status_code tinyint(1))\n"
+                                 "BEGIN\n"
+                                 "\tDECLARE EXIT HANDLER FOR SQLEXCEPTION\n"
+                                 "    BEGIN\n"
+                                 "        -- error\n"
+                                 "        SET status_code = 1;\n"
+                                 "        ROLLBACK;\n"
+                                 "    END;\n"
+                                 "\n"
+                                 "    DECLARE EXIT HANDLER FOR SQLWARNING\n"
+                                 "    BEGIN\n"
+                                 "        -- warning\n"
+                                 "        SET status_code = 2;\n"
+                                 "        ROLLBACK;\n"
+                                 "    END;\n"
+                                 "    START TRANSACTION;\n"
+                                 "\t\tIF NOT EXISTS ( SELECT * FROM student WHERE Id = i ) THEN\n"
+                                 "\t\t\t-- wrong id\n"
+                                 "\t\t\tSET status_code = 3;\n"
+                                 "\t\tELSE\n"
+                                 "\t\t\tUPDATE student SET Password = p WHERE Id = i;\n"
+                                 "            SET status_code = 0;\n"
+                                 "\t\tEND IF;\n"
+                                 "    COMMIT;\n"
+                                 "END";
     if(!this->alterQuery(procedureQuery)) {
         std::cerr << "Sometime wrong in the changePasswdProcedure create." << std::endl;
         return;

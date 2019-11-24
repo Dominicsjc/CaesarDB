@@ -336,3 +336,31 @@ profile userSession::getPersonalDetail() {
 
     return p;
 }
+
+void userSession::changePasswd(const std::string &passwd, int &status_code){
+    if (passwd.length() > 10){
+        status_code = 4;
+        return;
+    }
+
+    bool tryChange = db->alterQuery(
+            "CALL changePasswdProcedure(" + std::to_string(id) + ", '" + passwd + "', @stat);");
+    if (!tryChange) {
+        std::cerr << "Sometime wrong in the call change password procedure." << std::endl;
+        status_code = -1;
+        return;
+    }
+
+    MYSQL_RES *change_res = db->retrievalQuery("SELECT @stat;");
+    if (change_res == nullptr) {
+        std::cerr << "Sometime wrong in the query construction." << std::endl;
+        status_code = -1;
+        return;
+    }
+
+    MYSQL_ROW status_row;
+    status_row = mysql_fetch_row(change_res);
+    status_code = atoi(status_row[0]);
+
+    mysql_free_result(change_res);
+}
