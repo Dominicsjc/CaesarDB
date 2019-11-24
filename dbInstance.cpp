@@ -45,6 +45,8 @@ bool dbInstance::alterQuery(const std::string &myQuery){
 void dbInstance::proceduresInitial() {
     enrollInitial();
     withdrawInitial();
+    changePasswdInitial();
+    changeAddressInitial();
 }
 
 void dbInstance::enrollInitial() {
@@ -154,11 +156,27 @@ void dbInstance::withdrawInitial() {
 }
 
 void dbInstance::changePasswdInitial() {
-
+    if(!this->alterQuery("DROP PROCEDURE IF EXISTS changePasswdProcedure;")){
+        std::cerr << "Sometime wrong in the changePasswdProcedure drop." << std::endl;
+        return;
+    }
+    std::string procedureQuery = "???";
+    if(!this->alterQuery(procedureQuery)) {
+        std::cerr << "Sometime wrong in the changePasswdProcedure create." << std::endl;
+        return;
+    }
 }
 
 void dbInstance::changeAddressInitial() {
-
+    if(!this->alterQuery("DROP PROCEDURE IF EXISTS changeAddressProcedure;")){
+        std::cerr << "Sometime wrong in the changeAddressProcedure drop." << std::endl;
+        return;
+    }
+    std::string procedureQuery = "???";
+    if(!this->alterQuery(procedureQuery)) {
+        std::cerr << "Sometime wrong in the changeAddressProcedure create." << std::endl;
+        return;
+    }
 }
 
 void dbInstance::lowEnrollmentTriggerInitial() {

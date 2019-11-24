@@ -70,18 +70,6 @@ BEGIN
         ROLLBACK;
     END;
 
-DROP TRIGGER IF EXISTS lowEnrollmentTrigger;
-DELIMITER $$
-CREATE TRIGGER lowEnrollmentTrigger AFTER UPDATE ON uosoffering
-	FOR EACH ROW
-    BEGIN
-		SET @low = 0;
-        IF NEW.Enrollment < NEW.MaxEnrollment / 2 THEN
-			SET @low = 1;
-		END IF;
-    END $$
-DELIMITER ;
-
     DECLARE EXIT HANDLER FOR SQLWARNING
     BEGIN
         -- warning
@@ -100,4 +88,16 @@ DELIMITER ;
         END IF;
     COMMIT;
 END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS lowEnrollmentTrigger;
+DELIMITER $$
+CREATE TRIGGER lowEnrollmentTrigger AFTER UPDATE ON uosoffering
+	FOR EACH ROW
+    BEGIN
+		SET @low = 0;
+        IF NEW.Enrollment < NEW.MaxEnrollment / 2 THEN
+			SET @low = 1;
+		END IF;
+    END $$
 DELIMITER ;
