@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
 
 userSession *login(const std::string &username, const std::string &passwd, dbInstance *curDB) {
     auto *newUser = new userSession(username, passwd, curDB);
-    newUser->tryLogin();
+    //newUser->tryLogin();
     if (!newUser->getLoginStatus()) {
         delete (newUser);
         newUser = nullptr;

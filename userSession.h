@@ -41,22 +41,25 @@ private:
     dbInstance *db;
 
     int id = -1;
-    std::string name;
-    std::string password;
+    //std::string name;
+    //std::string password;
     bool login = false;
+
+    void tryLogin(const std::string &username, const std::string &passwd);
 
 public:
     userSession() = delete;
 
     userSession(const std::string &username, const std::string &passwd, dbInstance *mydb) {
         db = mydb;
-        name = username;
-        password = passwd;
+        //name = username;
+        //password = passwd;
+        tryLogin(username, passwd);
     };
 
     ~userSession() { db = nullptr; };
 
-    void tryLogin();
+    //void tryLogin();
 
     bool getLoginStatus();
 

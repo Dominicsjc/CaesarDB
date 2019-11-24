@@ -4,12 +4,12 @@
 
 #include "userSession.h"
 
-void userSession::tryLogin() {
-    if (name.empty() || password.empty())
+void userSession::tryLogin(const std::string &username, const std::string &passwd) {
+    if (username.empty() || passwd.empty())
         return;
 
     MYSQL_RES *login_res = db->retrievalQuery(
-            "SELECT id FROM student WHERE BINARY Name = '" + name + "' AND BINARY Password = '" + password + "';");
+            "SELECT id FROM student WHERE BINARY Name = '" + username + "' AND BINARY Password = '" + passwd + "';");
     if (login_res == nullptr) {
         std::cerr << "Sometime wrong in the query construction." << std::endl;
         return;
