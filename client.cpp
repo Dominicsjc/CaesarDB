@@ -131,22 +131,18 @@ int main(int argc, char *argv[]) {
                             }
                             switch (echoice) {
                                 case 1: {
-                                    while (1) {
-                                        std::cout << "Enter the course NO. shown above you want to enroll: ";
-                                        int no;
-                                        std::cin >> no;
-                                        if (no < 1 || no > info.size()) {
-                                            std::cout << "Please enter a valid NO.!" << std::endl;
-                                        } else {
-                                            tryEnroll(loginedStu, info[no - 1].code, info[no - 1].semester,
-                                                      info[no - 1].year);
-                                            std::cin.ignore();
-                                            std::cout << "Press Enter to return." << std::endl;
-                                            std::string tmp;
-                                            getline(std::cin, tmp);
-                                            break;
-                                        }
-                                    }
+                                    std::cout << "Enter the course NO. shown above you want to enroll: ";
+                                    int no;
+                                    std::cin >> no;
+                                    if (no < 1 || no > info.size())
+                                        std::cout << "Please enter a valid NO.!" << std::endl;
+                                    else
+                                        tryEnroll(loginedStu, info[no - 1].code, info[no - 1].semester,
+                                                  info[no - 1].year);
+                                    std::cin.ignore();
+                                    std::cout << "Press Enter to return" << std::endl;
+                                    std::string tmp;
+                                    getline(std::cin, tmp);
                                     break;
                                 }
                                 case 2: {
@@ -180,22 +176,18 @@ int main(int argc, char *argv[]) {
                             }
                             switch (wchoice) {
                                 case 1: {
-                                    while (1) {
-                                        std::cout << "Enter the course NO. shown above you want to withdraw: ";
-                                        int no;
-                                        std::cin >> no;
-                                        if (no < 1 || no > info.size()) {
-                                            std::cout << "Please enter a valid NO.!" << std::endl;
-                                        } else {
-                                            tryWithdraw(loginedStu, info[no - 1].code, info[no - 1].semester,
-                                                      info[no - 1].year);
-                                            std::cin.ignore();
-                                            std::cout << "Press Enter to return." << std::endl;
-                                            std::string tmp;
-                                            getline(std::cin, tmp);
-                                            break;
-                                        }
-                                    }
+                                    std::cout << "Enter the course NO. shown above you want to withdraw: ";
+                                    int no;
+                                    std::cin >> no;
+                                    if (no < 1 || no > info.size())
+                                        std::cout << "Please enter a valid NO.!" << std::endl;
+                                    else
+                                        tryWithdraw(loginedStu, info[no - 1].code, info[no - 1].semester,
+                                                    info[no - 1].year);
+                                    std::cin.ignore();
+                                    std::cout << "Press Enter to return." << std::endl;
+                                    std::string tmp;
+                                    getline(std::cin, tmp);
                                     break;
                                 }
                                 case 2: {
@@ -388,7 +380,7 @@ void tryEnroll(userSession *stu, const std::string &uoscode_in, const std::strin
     std::cout << std::endl;
 }
 
-std::vector<course_prog> printInprog(userSession *stu){
+std::vector<course_prog> printInprog(userSession *stu) {
     std::vector<course_prog> coursesInProg = stu->getCoursesInProgress();
 
     std::cout << "    UoSCode   Semester   Year"
@@ -402,7 +394,7 @@ std::vector<course_prog> printInprog(userSession *stu){
     return coursesInProg;
 }
 
-void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in){
+void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::string &semester_in, const int &year_in) {
     std::cout << std::endl;
     int status_code = -1;
     bool lowWarning = stu->withdrawCourse(uoscode_in, semester_in, year_in, status_code);
@@ -435,7 +427,7 @@ void tryWithdraw(userSession *stu, const std::string &uoscode_in, const std::str
     std::cout << std::endl;
 }
 
-void printRecord(userSession *stu){
+void printRecord(userSession *stu) {
     profile record = stu->getPersonalDetail();
     if (record.id == -1)
         std::cerr << "Not fetch the correct profile!" << std::endl;
@@ -447,7 +439,7 @@ void printRecord(userSession *stu){
     std::cout << std::endl;
 }
 
-void tryChangePasswd(userSession *stu, const std::string &newp){
+void tryChangePasswd(userSession *stu, const std::string &newp) {
     int status_code = -1;
     stu->changePasswd(newp, status_code);
     switch (status_code) {
@@ -475,7 +467,7 @@ void tryChangePasswd(userSession *stu, const std::string &newp){
     std::cout << std::endl;
 }
 
-void tryChangeAddress(userSession *stu, const std::string &newa){
+void tryChangeAddress(userSession *stu, const std::string &newa) {
     int status_code = -1;
     stu->changeAddress(newa, status_code);
     switch (status_code) {
